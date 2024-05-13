@@ -1,0 +1,538 @@
+<html>
+<head>
+<title>Main.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #2aacb8;}
+.s4 { color: #6aab73;}
+.s5 { color: #7a7e85;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Main.java</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s1">javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.*;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.*;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.</span><span class="s1">image</span><span class="s2">.</span><span class="s1">BufferedImage</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">javax</span><span class="s2">.</span><span class="s1">imageio</span><span class="s2">.</span><span class="s1">ImageIO</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">io</span><span class="s2">.</span><span class="s1">File</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">io</span><span class="s2">.</span><span class="s1">FileWriter</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">io</span><span class="s2">.</span><span class="s1">FileReader</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">io</span><span class="s2">.</span><span class="s1">BufferedReader</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">io</span><span class="s2">.</span><span class="s1">IOException</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">ArrayList</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">Stack</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">uk</span><span class="s2">.</span><span class="s1">ac</span><span class="s2">.</span><span class="s1">leedsbeckett</span><span class="s2">.</span><span class="s1">oop</span><span class="s2">.</span><span class="s1">OOPGraphics</span><span class="s2">;</span>
+
+
+
+<span class="s0">class </span><span class="s1">GraphicsSystem </span><span class="s0">extends </span><span class="s1">OOPGraphics </span><span class="s2">{</span>
+
+    <span class="s0">private </span><span class="s1">BufferedImage canvas</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">ArrayList</span><span class="s2">&lt;</span><span class="s1">String</span><span class="s2">&gt; </span><span class="s1">commandsList</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">Stack</span><span class="s2">&lt;</span><span class="s1">String</span><span class="s2">&gt; </span><span class="s1">undoStack</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">Stack</span><span class="s2">&lt;</span><span class="s1">String</span><span class="s2">&gt; </span><span class="s1">redoStack</span><span class="s2">;</span>
+    <span class="s0">private boolean </span><span class="s1">isImageSaved </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+
+
+
+    <span class="s0">public </span><span class="s1">GraphicsSystem</span><span class="s2">() {</span>
+        <span class="s1">canvas </span><span class="s2">= </span><span class="s0">new </span><span class="s1">BufferedImage</span><span class="s2">(</span><span class="s3">800</span><span class="s2">, </span><span class="s3">600</span><span class="s2">, </span><span class="s1">BufferedImage</span><span class="s2">.</span><span class="s1">TYPE_INT_RGB</span><span class="s2">);</span>
+        <span class="s1">commandsList </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;();</span>
+        <span class="s1">undoStack </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Stack</span><span class="s2">&lt;&gt;();</span>
+        <span class="s1">redoStack </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Stack</span><span class="s2">&lt;&gt;();</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">setupGraphics</span><span class="s2">() {</span>
+        <span class="s1">JFrame mainFrame </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JFrame</span><span class="s2">();</span>
+        <span class="s1">mainFrame</span><span class="s2">.</span><span class="s1">setDefaultCloseOperation</span><span class="s2">(</span><span class="s1">JFrame</span><span class="s2">.</span><span class="s1">EXIT_ON_CLOSE</span><span class="s2">);</span>
+        <span class="s1">mainFrame</span><span class="s2">.</span><span class="s1">setLayout</span><span class="s2">(</span><span class="s0">new </span><span class="s1">FlowLayout</span><span class="s2">());</span>
+        <span class="s1">mainFrame</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">this</span><span class="s2">);</span>
+        <span class="s1">mainFrame</span><span class="s2">.</span><span class="s1">pack</span><span class="s2">();</span>
+        <span class="s1">mainFrame</span><span class="s2">.</span><span class="s1">setVisible</span><span class="s2">(</span><span class="s0">true</span><span class="s2">);</span>
+        <span class="s0">super</span><span class="s2">.</span><span class="s1">about</span><span class="s2">();</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">processCommand</span><span class="s2">(</span><span class="s1">String command</span><span class="s2">) {</span>
+        <span class="s1">String</span><span class="s2">[] </span><span class="s1">parts </span><span class="s2">= </span><span class="s1">command</span><span class="s2">.</span><span class="s1">trim</span><span class="s2">().</span><span class="s1">split</span><span class="s2">(</span><span class="s4">&quot; &quot;</span><span class="s2">);</span>
+        <span class="s1">String commandType </span><span class="s2">= </span><span class="s1">parts</span><span class="s2">[</span><span class="s3">0</span><span class="s2">].</span><span class="s1">toLowerCase</span><span class="s2">();</span>
+
+        <span class="s0">switch </span><span class="s2">(</span><span class="s1">commandType</span><span class="s2">) {</span>
+            <span class="s0">case </span><span class="s4">&quot;about&quot;</span><span class="s2">:</span>
+                <span class="s1">about</span><span class="s2">();</span>
+                <span class="s0">break</span><span class="s2">;</span>
+            <span class="s0">case </span><span class="s4">&quot;reset&quot;</span><span class="s2">:</span>
+                <span class="s1">reset</span><span class="s2">();</span>
+                <span class="s1">setPenColour</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">RED</span><span class="s2">);</span>
+                <span class="s1">setStroke</span><span class="s2">(</span><span class="s3">1</span><span class="s2">);</span>
+                <span class="s0">break</span><span class="s2">;</span>
+            <span class="s0">case </span><span class="s4">&quot;pendown&quot;</span><span class="s2">:</span>
+                <span class="s1">penDown</span><span class="s2">();</span>
+                <span class="s0">break</span><span class="s2">;</span>
+            <span class="s0">case </span><span class="s4">&quot;forward&quot;</span><span class="s2">:</span>
+                <span class="s1">handleForwardCommand</span><span class="s2">(</span><span class="s1">parts</span><span class="s2">);</span>
+                <span class="s0">break</span><span class="s2">;</span>
+            <span class="s0">case </span><span class="s4">&quot;backward&quot;</span><span class="s2">:</span>
+                <span class="s1">handleBackwardCommand</span><span class="s2">(</span><span class="s1">parts</span><span class="s2">);</span>
+                <span class="s0">break</span><span class="s2">;</span>
+            <span class="s0">case </span><span class="s4">&quot;turnleft&quot;</span><span class="s2">:</span>
+                <span class="s1">handleTurnLeftCommand</span><span class="s2">(</span><span class="s1">parts</span><span class="s2">);</span>
+                <span class="s0">break</span><span class="s2">;</span>
+            <span class="s0">case </span><span class="s4">&quot;turnright&quot;</span><span class="s2">:</span>
+                <span class="s1">handleTurnRightCommand</span><span class="s2">(</span><span class="s1">parts</span><span class="s2">);</span>
+                <span class="s0">break</span><span class="s2">;</span>
+            <span class="s0">case </span><span class="s4">&quot;penup&quot;</span><span class="s2">:</span>
+                <span class="s1">penUp</span><span class="s2">();</span>
+                <span class="s0">break</span><span class="s2">;</span>
+            <span class="s0">case </span><span class="s4">&quot;red&quot;</span><span class="s2">:</span>
+                <span class="s1">setPenColour</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">RED</span><span class="s2">);</span>
+                <span class="s0">break</span><span class="s2">;</span>
+            <span class="s0">case </span><span class="s4">&quot;green&quot;</span><span class="s2">:</span>
+                <span class="s1">setPenColour</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">GREEN</span><span class="s2">);</span>
+                <span class="s0">break</span><span class="s2">;</span>
+            <span class="s0">case </span><span class="s4">&quot;blue&quot;</span><span class="s2">:</span>
+                <span class="s1">setPenColour</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">BLUE</span><span class="s2">);</span>
+                <span class="s0">break</span><span class="s2">;</span>
+            <span class="s0">case </span><span class="s4">&quot;yellow&quot;</span><span class="s2">:</span>
+                <span class="s1">setPenColour</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">YELLOW</span><span class="s2">);</span>
+                <span class="s0">break</span><span class="s2">;</span>
+            <span class="s0">case </span><span class="s4">&quot;clear&quot;</span><span class="s2">:</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">isImageSaved</span><span class="s2">) {</span>
+                    <span class="s1">clear</span><span class="s2">();</span>
+                    <span class="s1">isImageSaved </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+                    <span class="s0">break</span><span class="s2">;</span>
+                <span class="s2">}</span>
+                <span class="s0">else </span><span class="s2">{</span>
+                    <span class="s0">int </span><span class="s1">result </span><span class="s2">= </span><span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showConfirmDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;The current image is not saved. Are you sure you want to clear the canvas?&quot;</span><span class="s2">, </span><span class="s4">&quot;Warning&quot;</span><span class="s2">, </span><span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">YES_NO_OPTION</span><span class="s2">);</span>
+                    <span class="s0">if </span><span class="s2">(</span><span class="s1">result </span><span class="s2">== </span><span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">NO_OPTION</span><span class="s2">) {</span>
+                        <span class="s0">break</span><span class="s2">;</span>
+                    <span class="s2">}</span>
+                    <span class="s0">else</span><span class="s2">{</span>
+                        <span class="s1">clear</span><span class="s2">();</span>
+                        <span class="s0">break</span><span class="s2">;</span>
+                    <span class="s2">}</span>
+                <span class="s2">}</span>
+            <span class="s0">case </span><span class="s4">&quot;right&quot;</span><span class="s2">:</span>
+                <span class="s1">turnRight</span><span class="s2">(</span><span class="s3">90</span><span class="s2">);</span>
+                <span class="s0">break</span><span class="s2">;</span>
+
+            <span class="s0">case </span><span class="s4">&quot;save&quot;</span><span class="s2">:</span>
+                <span class="s1">saveImage</span><span class="s2">();</span>
+                <span class="s0">break</span><span class="s2">;</span>
+
+            <span class="s0">case </span><span class="s4">&quot;savecommands&quot;</span><span class="s2">:</span>
+
+                <span class="s1">saveCommands</span><span class="s2">();</span>
+                <span class="s0">break</span><span class="s2">;</span>
+
+            <span class="s0">case </span><span class="s4">&quot;load&quot;</span><span class="s2">:</span>
+                <span class="s1">loadImage</span><span class="s2">();</span>
+                <span class="s0">break</span><span class="s2">;</span>
+            <span class="s0">case </span><span class="s4">&quot;loadcommands&quot;</span><span class="s2">:</span>
+                <span class="s1">loadCommands</span><span class="s2">();</span>
+                <span class="s0">break</span><span class="s2">;</span>
+            <span class="s0">case </span><span class="s4">&quot;square&quot;</span><span class="s2">:</span>
+                <span class="s1">handlesquareCommand</span><span class="s2">(</span><span class="s1">parts</span><span class="s2">);</span>
+                <span class="s0">break</span><span class="s2">;</span>
+            <span class="s0">case </span><span class="s4">&quot;triangle&quot;</span><span class="s2">:</span>
+                <span class="s1">handletriangleCommand</span><span class="s2">(</span><span class="s1">parts</span><span class="s2">);</span>
+                <span class="s0">break</span><span class="s2">;</span>
+            <span class="s0">case </span><span class="s4">&quot;pencolor&quot;</span><span class="s2">:</span>
+                <span class="s1">handlepenCommand</span><span class="s2">(</span><span class="s1">parts</span><span class="s2">);</span>
+                <span class="s0">break</span><span class="s2">;</span>
+            <span class="s0">case </span><span class="s4">&quot;triangle_3sides&quot;</span><span class="s2">:</span>
+                <span class="s1">handletriangle</span><span class="s2">(</span><span class="s1">parts</span><span class="s2">);</span>
+                <span class="s0">break</span><span class="s2">;</span>
+
+            <span class="s0">case </span><span class="s4">&quot;undo&quot;</span><span class="s2">:</span>
+                <span class="s1">undo</span><span class="s2">();</span>
+                <span class="s0">break</span><span class="s2">;</span>
+
+            <span class="s0">case </span><span class="s4">&quot;penwidth&quot;</span><span class="s2">:</span>
+                <span class="s1">handlePenWidthCommand</span><span class="s2">(</span><span class="s1">parts</span><span class="s2">);</span>
+                <span class="s0">break</span><span class="s2">;</span>
+
+            <span class="s0">default</span><span class="s2">:</span>
+                <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Invalid Command: &quot; </span><span class="s2">+ </span><span class="s1">command</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s1">commandsList</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">command</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+
+
+
+
+
+
+
+    <span class="s0">private void </span><span class="s1">handleForwardCommand</span><span class="s2">(</span><span class="s1">String</span><span class="s2">[] </span><span class="s1">parts</span><span class="s2">) {</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">parts</span><span class="s2">.</span><span class="s1">length </span><span class="s2">== </span><span class="s3">2</span><span class="s2">) {</span>
+            <span class="s0">try </span><span class="s2">{</span>
+                <span class="s0">int </span><span class="s1">distance </span><span class="s2">= </span><span class="s1">Integer</span><span class="s2">.</span><span class="s1">parseInt</span><span class="s2">(</span><span class="s1">parts</span><span class="s2">[</span><span class="s3">1</span><span class="s2">]);</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">isValidDistance</span><span class="s2">(</span><span class="s1">distance</span><span class="s2">)) {</span>
+                    <span class="s1">forward</span><span class="s2">(</span><span class="s1">distance</span><span class="s2">);</span>
+                <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                    <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Invalid distance: &quot; </span><span class="s2">+ </span><span class="s1">distance</span><span class="s2">);</span>
+                <span class="s2">}</span>
+            <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">NumberFormatException e</span><span class="s2">) {</span>
+                <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Invalid Parameter for the command Non Numeric: &quot; </span><span class="s2">+ </span><span class="s1">parts</span><span class="s2">[</span><span class="s3">0</span><span class="s2">]);</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Missing Parameter for the command: &quot; </span><span class="s2">+ </span><span class="s1">parts</span><span class="s2">[</span><span class="s3">0</span><span class="s2">]);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private void </span><span class="s1">handleBackwardCommand</span><span class="s2">(</span><span class="s1">String</span><span class="s2">[] </span><span class="s1">parts</span><span class="s2">) {</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">parts</span><span class="s2">.</span><span class="s1">length </span><span class="s2">== </span><span class="s3">2</span><span class="s2">) {</span>
+            <span class="s0">try </span><span class="s2">{</span>
+                <span class="s0">int </span><span class="s1">distance </span><span class="s2">= </span><span class="s1">Integer</span><span class="s2">.</span><span class="s1">parseInt</span><span class="s2">(</span><span class="s1">parts</span><span class="s2">[</span><span class="s3">1</span><span class="s2">]);</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">isValidDistance</span><span class="s2">(</span><span class="s1">distance</span><span class="s2">)) {</span>
+                    <span class="s1">forward</span><span class="s2">(-</span><span class="s1">distance</span><span class="s2">);</span>
+                <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                    <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Invalid distance: &quot; </span><span class="s2">+ </span><span class="s1">distance</span><span class="s2">);</span>
+                <span class="s2">}</span>
+            <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">NumberFormatException e</span><span class="s2">) {</span>
+                <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Invalid Parameter for the command: &quot; </span><span class="s2">+ </span><span class="s1">parts</span><span class="s2">[</span><span class="s3">0</span><span class="s2">]);</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Missing Parameter for the command: &quot; </span><span class="s2">+ </span><span class="s1">parts</span><span class="s2">[</span><span class="s3">0</span><span class="s2">]);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+    <span class="s0">private boolean </span><span class="s1">isValidDistance</span><span class="s2">(</span><span class="s0">int </span><span class="s1">distance</span><span class="s2">) {</span>
+        <span class="s0">int </span><span class="s1">MAX_DISTANCE </span><span class="s2">= </span><span class="s3">1000</span><span class="s2">;</span>
+        <span class="s0">return </span><span class="s1">distance </span><span class="s2">&gt;= </span><span class="s3">0 </span><span class="s2">&amp;&amp; </span><span class="s1">distance </span><span class="s2">&lt;= </span><span class="s1">MAX_DISTANCE</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private boolean </span><span class="s1">isValidDegrees</span><span class="s2">(</span><span class="s0">int </span><span class="s1">degrees</span><span class="s2">) {</span>
+        <span class="s0">int </span><span class="s1">MAX_DEGREES </span><span class="s2">= </span><span class="s3">360</span><span class="s2">;</span>
+        <span class="s0">return </span><span class="s1">degrees </span><span class="s2">&gt;= </span><span class="s3">0 </span><span class="s2">&amp;&amp; </span><span class="s1">degrees </span><span class="s2">&lt;= </span><span class="s1">MAX_DEGREES</span><span class="s2">;</span>
+    <span class="s2">}</span>
+    <span class="s0">private void </span><span class="s1">handleTurnLeftCommand</span><span class="s2">(</span><span class="s1">String</span><span class="s2">[] </span><span class="s1">parts</span><span class="s2">) {</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">parts</span><span class="s2">.</span><span class="s1">length </span><span class="s2">== </span><span class="s3">2</span><span class="s2">) {</span>
+            <span class="s0">try </span><span class="s2">{</span>
+                <span class="s0">int </span><span class="s1">degrees </span><span class="s2">= </span><span class="s1">Integer</span><span class="s2">.</span><span class="s1">parseInt</span><span class="s2">(</span><span class="s1">parts</span><span class="s2">[</span><span class="s3">1</span><span class="s2">]);</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">isValidDegrees</span><span class="s2">(</span><span class="s1">degrees</span><span class="s2">)) {</span>
+                    <span class="s1">turnLeft</span><span class="s2">(</span><span class="s1">degrees</span><span class="s2">);</span>
+                <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                    <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Invalid degrees: &quot; </span><span class="s2">+ </span><span class="s1">degrees</span><span class="s2">);</span>
+                <span class="s2">}</span>
+            <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">NumberFormatException e</span><span class="s2">) {</span>
+                <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Invalid Parameter for the command: &quot; </span><span class="s2">+ </span><span class="s1">parts</span><span class="s2">[</span><span class="s3">0</span><span class="s2">]);</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Missing Parameter for the command: &quot; </span><span class="s2">+ </span><span class="s1">parts</span><span class="s2">[</span><span class="s3">0</span><span class="s2">]);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private void </span><span class="s1">handleTurnRightCommand</span><span class="s2">(</span><span class="s1">String</span><span class="s2">[] </span><span class="s1">parts</span><span class="s2">) {</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">parts</span><span class="s2">.</span><span class="s1">length </span><span class="s2">== </span><span class="s3">2</span><span class="s2">) {</span>
+            <span class="s0">try </span><span class="s2">{</span>
+                <span class="s0">int </span><span class="s1">degrees </span><span class="s2">= </span><span class="s1">Integer</span><span class="s2">.</span><span class="s1">parseInt</span><span class="s2">(</span><span class="s1">parts</span><span class="s2">[</span><span class="s3">1</span><span class="s2">]);</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">isValidDegrees</span><span class="s2">(</span><span class="s1">degrees</span><span class="s2">)) {</span>
+                    <span class="s1">turnRight</span><span class="s2">(</span><span class="s1">degrees</span><span class="s2">);</span>
+                <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                    <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Invalid degrees: &quot; </span><span class="s2">+ </span><span class="s1">degrees</span><span class="s2">);</span>
+                <span class="s2">}</span>
+            <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">NumberFormatException e</span><span class="s2">) {</span>
+                <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Invalid Parameter for the command: &quot; </span><span class="s2">+ </span><span class="s1">parts</span><span class="s2">[</span><span class="s3">0</span><span class="s2">]);</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Missing Parameter for the command: &quot; </span><span class="s2">+ </span><span class="s1">parts</span><span class="s2">[</span><span class="s3">0</span><span class="s2">]);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+
+    <span class="s0">private void </span><span class="s1">handletriangleCommand</span><span class="s2">(</span><span class="s1">String</span><span class="s2">[] </span><span class="s1">parts</span><span class="s2">) {</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">parts</span><span class="s2">.</span><span class="s1">length </span><span class="s2">== </span><span class="s3">2</span><span class="s2">) {</span>
+            <span class="s0">try </span><span class="s2">{</span>
+                <span class="s0">int </span><span class="s1">distance </span><span class="s2">= </span><span class="s1">Integer</span><span class="s2">.</span><span class="s1">parseInt</span><span class="s2">(</span><span class="s1">parts</span><span class="s2">[</span><span class="s3">1</span><span class="s2">]);</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">isValidDistance</span><span class="s2">(</span><span class="s1">distance</span><span class="s2">)) {</span>
+                    <span class="s1">triangle</span><span class="s2">(</span><span class="s1">distance</span><span class="s2">); </span><span class="s5">// Note: This should be backward, not forward</span>
+                <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                    <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Invalid distance: &quot; </span><span class="s2">+ </span><span class="s1">distance</span><span class="s2">);</span>
+                <span class="s2">}</span>
+            <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">NumberFormatException e</span><span class="s2">) {</span>
+                <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Invalid Parameter for the command: &quot; </span><span class="s2">+ </span><span class="s1">parts</span><span class="s2">[</span><span class="s3">0</span><span class="s2">]);</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Missing Parameter for the command: &quot; </span><span class="s2">+ </span><span class="s1">parts</span><span class="s2">[</span><span class="s3">0</span><span class="s2">]);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private void </span><span class="s1">handlePenWidthCommand</span><span class="s2">(</span><span class="s1">String</span><span class="s2">[] </span><span class="s1">parts</span><span class="s2">) {</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">parts</span><span class="s2">.</span><span class="s1">length </span><span class="s2">== </span><span class="s3">2</span><span class="s2">) {</span>
+            <span class="s0">try </span><span class="s2">{</span>
+                <span class="s0">int </span><span class="s1">width </span><span class="s2">= </span><span class="s1">Integer</span><span class="s2">.</span><span class="s1">parseInt</span><span class="s2">(</span><span class="s1">parts</span><span class="s2">[</span><span class="s3">1</span><span class="s2">]);</span>
+                <span class="s1">setStroke</span><span class="s2">(</span><span class="s1">width</span><span class="s2">);</span>
+            <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">NumberFormatException e</span><span class="s2">) {</span>
+                <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Invalid parameter for penwidth command.&quot;</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Invalid command format for penwidth.&quot;</span><span class="s2">);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private void </span><span class="s1">handlesquareCommand</span><span class="s2">(</span><span class="s1">String</span><span class="s2">[] </span><span class="s1">parts</span><span class="s2">) {</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">parts</span><span class="s2">.</span><span class="s1">length </span><span class="s2">== </span><span class="s3">2</span><span class="s2">) {</span>
+            <span class="s0">try </span><span class="s2">{</span>
+                <span class="s0">int </span><span class="s1">distance </span><span class="s2">= </span><span class="s1">Integer</span><span class="s2">.</span><span class="s1">parseInt</span><span class="s2">(</span><span class="s1">parts</span><span class="s2">[</span><span class="s3">1</span><span class="s2">]);</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">isValidDistance</span><span class="s2">(</span><span class="s1">distance</span><span class="s2">)) {</span>
+                    <span class="s1">square</span><span class="s2">(</span><span class="s1">distance</span><span class="s2">); </span><span class="s5">// Note: This should be backward, not forward</span>
+                <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                    <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Invalid distance: &quot; </span><span class="s2">+ </span><span class="s1">distance</span><span class="s2">);</span>
+                <span class="s2">}</span>
+            <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">NumberFormatException e</span><span class="s2">) {</span>
+                <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Invalid Parameter for the command: &quot; </span><span class="s2">+ </span><span class="s1">parts</span><span class="s2">[</span><span class="s3">0</span><span class="s2">]);</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Missing Parameter for the command: &quot; </span><span class="s2">+ </span><span class="s1">parts</span><span class="s2">[</span><span class="s3">0</span><span class="s2">]);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+
+    <span class="s0">private void </span><span class="s1">saveImage</span><span class="s2">() {</span>
+        <span class="s0">try </span><span class="s2">{</span>
+            <span class="s1">JFileChooser fileChooser </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JFileChooser</span><span class="s2">();</span>
+            <span class="s0">int </span><span class="s1">result </span><span class="s2">= </span><span class="s1">fileChooser</span><span class="s2">.</span><span class="s1">showSaveDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">);</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">result </span><span class="s2">== </span><span class="s1">JFileChooser</span><span class="s2">.</span><span class="s1">APPROVE_OPTION</span><span class="s2">) {</span>
+                <span class="s1">File file </span><span class="s2">= </span><span class="s1">fileChooser</span><span class="s2">.</span><span class="s1">getSelectedFile</span><span class="s2">();</span>
+                <span class="s1">Graphics2D g2d </span><span class="s2">= </span><span class="s1">canvas</span><span class="s2">.</span><span class="s1">createGraphics</span><span class="s2">();</span>
+                <span class="s1">paintComponent</span><span class="s2">(</span><span class="s1">g2d</span><span class="s2">);</span>
+                <span class="s1">g2d</span><span class="s2">.</span><span class="s1">dispose</span><span class="s2">();</span>
+                <span class="s1">ImageIO</span><span class="s2">.</span><span class="s1">write</span><span class="s2">(</span><span class="s1">canvas</span><span class="s2">, </span><span class="s4">&quot;jpg&quot;</span><span class="s2">, </span><span class="s1">file</span><span class="s2">);</span>
+                <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Image saved successfully!&quot;</span><span class="s2">);</span>
+                <span class="s1">isImageSaved </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+                <span class="s1">BufferedImage savedImage </span><span class="s2">= </span><span class="s1">ImageIO</span><span class="s2">.</span><span class="s1">read</span><span class="s2">(</span><span class="s1">file</span><span class="s2">);</span>
+                <span class="s1">JLabel imageLabel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s0">new </span><span class="s1">ImageIcon</span><span class="s2">(</span><span class="s1">savedImage</span><span class="s2">));</span>
+                <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s1">imageLabel</span><span class="s2">);</span>
+
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">IOException e</span><span class="s2">) {</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Error saving image: &quot; </span><span class="s2">+ </span><span class="s1">e</span><span class="s2">.</span><span class="s1">getMessage</span><span class="s2">());</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private void </span><span class="s1">loadImage</span><span class="s2">() {</span>
+        <span class="s0">try </span><span class="s2">{</span>
+            <span class="s1">JFileChooser fileChooser </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JFileChooser</span><span class="s2">();</span>
+            <span class="s0">int </span><span class="s1">result </span><span class="s2">= </span><span class="s1">fileChooser</span><span class="s2">.</span><span class="s1">showOpenDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">);</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">result </span><span class="s2">== </span><span class="s1">JFileChooser</span><span class="s2">.</span><span class="s1">APPROVE_OPTION</span><span class="s2">) {</span>
+                <span class="s1">File file </span><span class="s2">= </span><span class="s1">fileChooser</span><span class="s2">.</span><span class="s1">getSelectedFile</span><span class="s2">();</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">file </span><span class="s2">!= </span><span class="s0">null </span><span class="s2">&amp;&amp; </span><span class="s1">file</span><span class="s2">.</span><span class="s1">exists</span><span class="s2">()) {</span>
+                    <span class="s1">BufferedImage img </span><span class="s2">= </span><span class="s1">ImageIO</span><span class="s2">.</span><span class="s1">read</span><span class="s2">(</span><span class="s1">file</span><span class="s2">);</span>
+                    <span class="s0">if </span><span class="s2">(</span><span class="s1">img </span><span class="s2">!= </span><span class="s0">null</span><span class="s2">) {</span>
+                        <span class="s1">canvas </span><span class="s2">= </span><span class="s1">img</span><span class="s2">;</span>
+                        <span class="s1">setPreferredSize</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Dimension</span><span class="s2">(</span><span class="s1">canvas</span><span class="s2">.</span><span class="s1">getWidth</span><span class="s2">(), </span><span class="s1">canvas</span><span class="s2">.</span><span class="s1">getHeight</span><span class="s2">()));</span>
+
+                        <span class="s5">// Repaint the canvas to display the loaded image</span>
+                        <span class="s1">repaint</span><span class="s2">();</span>
+                        <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Image loaded successfully!&quot;</span><span class="s2">);</span>
+
+                        <span class="s5">// Draw the loaded image onto the canvas</span>
+                        <span class="s1">Graphics g </span><span class="s2">= </span><span class="s1">getGraphics</span><span class="s2">();</span>
+                        <span class="s1">g</span><span class="s2">.</span><span class="s1">drawImage</span><span class="s2">(</span><span class="s1">canvas</span><span class="s2">, </span><span class="s3">0</span><span class="s2">, </span><span class="s3">0</span><span class="s2">, </span><span class="s0">null</span><span class="s2">);</span>
+                        <span class="s1">g</span><span class="s2">.</span><span class="s1">dispose</span><span class="s2">();</span>
+                    <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                        <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Error: Unable to load image. The file may be corrupted or in an unsupported format.&quot;</span><span class="s2">);</span>
+                    <span class="s2">}</span>
+                <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                    <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Error: Selected file does not exist.&quot;</span><span class="s2">);</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">IOException e</span><span class="s2">) {</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Error loading image: &quot; </span><span class="s2">+ </span><span class="s1">e</span><span class="s2">.</span><span class="s1">getMessage</span><span class="s2">());</span>
+            <span class="s1">e</span><span class="s2">.</span><span class="s1">printStackTrace</span><span class="s2">(); </span><span class="s5">// Print the stack trace for debugging</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+
+
+
+    <span class="s0">private void </span><span class="s1">saveCommands</span><span class="s2">() {</span>
+        <span class="s0">try </span><span class="s2">{</span>
+            <span class="s1">JFileChooser fileChooser </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JFileChooser</span><span class="s2">();</span>
+            <span class="s0">int </span><span class="s1">result </span><span class="s2">= </span><span class="s1">fileChooser</span><span class="s2">.</span><span class="s1">showSaveDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">);</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">result </span><span class="s2">== </span><span class="s1">JFileChooser</span><span class="s2">.</span><span class="s1">APPROVE_OPTION</span><span class="s2">) {</span>
+                <span class="s1">File file </span><span class="s2">= </span><span class="s1">fileChooser</span><span class="s2">.</span><span class="s1">getSelectedFile</span><span class="s2">();</span>
+                <span class="s1">FileWriter writer </span><span class="s2">= </span><span class="s0">new </span><span class="s1">FileWriter</span><span class="s2">(</span><span class="s1">file</span><span class="s2">);</span>
+                <span class="s0">for </span><span class="s2">(</span><span class="s1">String command </span><span class="s2">: </span><span class="s1">commandsList</span><span class="s2">) {</span>
+                    <span class="s1">writer</span><span class="s2">.</span><span class="s1">write</span><span class="s2">(</span><span class="s1">command </span><span class="s2">+ </span><span class="s4">&quot;</span><span class="s0">\n</span><span class="s4">&quot;</span><span class="s2">);</span>
+                <span class="s2">}</span>
+                <span class="s1">writer</span><span class="s2">.</span><span class="s1">close</span><span class="s2">();</span>
+                <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Commands saved successfully!&quot;</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">IOException e</span><span class="s2">) {</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Error saving commands: &quot; </span><span class="s2">+ </span><span class="s1">e</span><span class="s2">.</span><span class="s1">getMessage</span><span class="s2">());</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private void </span><span class="s1">loadCommands</span><span class="s2">() {</span>
+        <span class="s0">try </span><span class="s2">{</span>
+            <span class="s1">JFileChooser fileChooser </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JFileChooser</span><span class="s2">();</span>
+            <span class="s0">int </span><span class="s1">result </span><span class="s2">= </span><span class="s1">fileChooser</span><span class="s2">.</span><span class="s1">showOpenDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">);</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">result </span><span class="s2">== </span><span class="s1">JFileChooser</span><span class="s2">.</span><span class="s1">APPROVE_OPTION</span><span class="s2">) {</span>
+                <span class="s1">File file </span><span class="s2">= </span><span class="s1">fileChooser</span><span class="s2">.</span><span class="s1">getSelectedFile</span><span class="s2">();</span>
+                <span class="s1">BufferedReader reader </span><span class="s2">= </span><span class="s0">new </span><span class="s1">BufferedReader</span><span class="s2">(</span><span class="s0">new </span><span class="s1">FileReader</span><span class="s2">(</span><span class="s1">file</span><span class="s2">));</span>
+                <span class="s1">String line</span><span class="s2">;</span>
+                <span class="s0">while </span><span class="s2">((</span><span class="s1">line </span><span class="s2">= </span><span class="s1">reader</span><span class="s2">.</span><span class="s1">readLine</span><span class="s2">()) != </span><span class="s0">null</span><span class="s2">) {</span>
+                    <span class="s1">processCommand</span><span class="s2">(</span><span class="s1">line</span><span class="s2">);</span>
+                <span class="s2">}</span>
+                <span class="s1">reader</span><span class="s2">.</span><span class="s1">close</span><span class="s2">();</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">IOException e</span><span class="s2">) {</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Error loading commands: &quot; </span><span class="s2">+ </span><span class="s1">e</span><span class="s2">.</span><span class="s1">getMessage</span><span class="s2">());</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public void </span><span class="s1">about</span><span class="s2">() {</span>
+        <span class="s0">super</span><span class="s2">.</span><span class="s1">about</span><span class="s2">();</span>
+        <span class="s1">Graphics g </span><span class="s2">= </span><span class="s1">getGraphics2DContext</span><span class="s2">();</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">setColor</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">green</span><span class="s2">);</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">drawString</span><span class="s2">(</span><span class="s4">&quot;Lalitha Valli Sai Sushma Bokka&quot;</span><span class="s2">, </span><span class="s3">225</span><span class="s2">, </span><span class="s3">300</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+
+
+
+    <span class="s0">public void </span><span class="s1">square</span><span class="s2">(</span><span class="s0">int </span><span class="s1">length</span><span class="s2">) {</span>
+        <span class="s1">forward</span><span class="s2">(</span><span class="s1">length</span><span class="s2">);</span>
+        <span class="s1">turnRight</span><span class="s2">(</span><span class="s3">90</span><span class="s2">);</span>
+        <span class="s1">forward</span><span class="s2">(</span><span class="s1">length</span><span class="s2">);</span>
+        <span class="s1">turnRight</span><span class="s2">(</span><span class="s3">90</span><span class="s2">);</span>
+        <span class="s1">forward</span><span class="s2">(</span><span class="s1">length</span><span class="s2">);</span>
+        <span class="s1">turnRight</span><span class="s2">(</span><span class="s3">90</span><span class="s2">);</span>
+        <span class="s1">forward</span><span class="s2">(</span><span class="s1">length</span><span class="s2">);</span>
+        <span class="s1">reset</span><span class="s2">();</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">triangle</span><span class="s2">(</span><span class="s0">int </span><span class="s1">size</span><span class="s2">) {</span>
+        <span class="s0">double </span><span class="s1">angle </span><span class="s2">= </span><span class="s1">Math</span><span class="s2">.</span><span class="s1">toRadians</span><span class="s2">(</span><span class="s3">30</span><span class="s2">);</span>
+        <span class="s0">int </span><span class="s1">height </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">) (</span><span class="s1">Math</span><span class="s2">.</span><span class="s1">sin</span><span class="s2">(</span><span class="s1">angle</span><span class="s2">) * </span><span class="s1">size</span><span class="s2">);</span>
+        <span class="s0">int </span><span class="s1">base </span><span class="s2">= </span><span class="s1">size </span><span class="s2">* </span><span class="s3">2</span><span class="s2">;</span>
+        <span class="s1">forward</span><span class="s2">(</span><span class="s1">size</span><span class="s2">);</span>
+        <span class="s1">turnLeft</span><span class="s2">(</span><span class="s3">120</span><span class="s2">);</span>
+        <span class="s1">forward</span><span class="s2">(</span><span class="s1">size</span><span class="s2">);</span>
+        <span class="s1">turnLeft</span><span class="s2">(</span><span class="s3">120</span><span class="s2">);</span>
+        <span class="s1">forward</span><span class="s2">(</span><span class="s1">size</span><span class="s2">);</span>
+        <span class="s1">turnLeft</span><span class="s2">(</span><span class="s3">120</span><span class="s2">);</span>
+        <span class="s1">reset</span><span class="s2">();</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">handlepenCommand</span><span class="s2">(</span><span class="s1">String</span><span class="s2">[] </span><span class="s1">parts</span><span class="s2">) {</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">parts</span><span class="s2">.</span><span class="s1">length </span><span class="s2">== </span><span class="s3">4</span><span class="s2">) {</span>
+            <span class="s0">try </span><span class="s2">{</span>
+                <span class="s0">int </span><span class="s1">red </span><span class="s2">= </span><span class="s1">Integer</span><span class="s2">.</span><span class="s1">parseInt</span><span class="s2">(</span><span class="s1">parts</span><span class="s2">[</span><span class="s3">1</span><span class="s2">].</span><span class="s1">trim</span><span class="s2">());</span>
+                <span class="s0">int </span><span class="s1">green </span><span class="s2">= </span><span class="s1">Integer</span><span class="s2">.</span><span class="s1">parseInt</span><span class="s2">(</span><span class="s1">parts</span><span class="s2">[</span><span class="s3">2</span><span class="s2">].</span><span class="s1">trim</span><span class="s2">());</span>
+                <span class="s0">int </span><span class="s1">blue </span><span class="s2">= </span><span class="s1">Integer</span><span class="s2">.</span><span class="s1">parseInt</span><span class="s2">(</span><span class="s1">parts</span><span class="s2">[</span><span class="s3">3</span><span class="s2">].</span><span class="s1">trim</span><span class="s2">());</span>
+
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">isValidRGB</span><span class="s2">(</span><span class="s1">red</span><span class="s2">) &amp;&amp; </span><span class="s1">isValidRGB</span><span class="s2">(</span><span class="s1">green</span><span class="s2">) &amp;&amp; </span><span class="s1">isValidRGB</span><span class="s2">(</span><span class="s1">blue</span><span class="s2">)) {</span>
+                    <span class="s1">setPenColour</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Color</span><span class="s2">(</span><span class="s1">red</span><span class="s2">, </span><span class="s1">green</span><span class="s2">, </span><span class="s1">blue</span><span class="s2">));</span>
+                <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                    <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Invalid RGB values: Values must be between 0 and 255&quot;</span><span class="s2">);</span>
+                <span class="s2">}</span>
+            <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">NumberFormatException e</span><span class="s2">) {</span>
+                <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Invalid RGB values: &quot; </span><span class="s2">+ </span><span class="s1">e</span><span class="s2">.</span><span class="s1">getMessage</span><span class="s2">());</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Invalid command format: &quot;</span><span class="s2">);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private boolean </span><span class="s1">isValidRGB</span><span class="s2">(</span><span class="s0">int </span><span class="s1">value</span><span class="s2">) {</span>
+        <span class="s0">return </span><span class="s1">value </span><span class="s2">&gt;= </span><span class="s3">0 </span><span class="s2">&amp;&amp; </span><span class="s1">value </span><span class="s2">&lt;= </span><span class="s3">255</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+
+    <span class="s5">// Implement undo functionality</span>
+    <span class="s0">public void </span><span class="s1">undo</span><span class="s2">() {</span>
+        <span class="s0">if </span><span class="s2">(!</span><span class="s1">commandsList</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">()) {</span>
+            <span class="s1">String lastCommand </span><span class="s2">= </span><span class="s1">commandsList</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">(</span><span class="s1">commandsList</span><span class="s2">.</span><span class="s1">size</span><span class="s2">() - </span><span class="s3">1</span><span class="s2">);</span>
+            <span class="s1">undoStack</span><span class="s2">.</span><span class="s1">push</span><span class="s2">(</span><span class="s1">lastCommand</span><span class="s2">);</span>
+            <span class="s1">redoStack</span><span class="s2">.</span><span class="s1">clear</span><span class="s2">();</span>
+            <span class="s1">reset</span><span class="s2">();</span>
+            <span class="s1">processCommand</span><span class="s2">(</span><span class="s4">&quot;reset&quot;</span><span class="s2">); </span><span class="s5">// Reset the canvas before re-executing commands</span>
+            <span class="s1">executeCommands</span><span class="s2">();</span>
+        <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Nothing to undo&quot;</span><span class="s2">);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+
+    <span class="s5">// Implement redo functionality</span>
+
+
+    <span class="s0">private void </span><span class="s1">executeCommands</span><span class="s2">() {</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s1">String command </span><span class="s2">: </span><span class="s1">commandsList</span><span class="s2">) {</span>
+            <span class="s1">processCommand</span><span class="s2">(</span><span class="s1">command</span><span class="s2">);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s5">// Other helper methods remain unchanged</span>
+    <span class="s5">// ...</span>
+    <span class="s0">private void </span><span class="s1">handletriangle</span><span class="s2">(</span><span class="s1">String</span><span class="s2">[] </span><span class="s1">parts</span><span class="s2">) {</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">parts</span><span class="s2">.</span><span class="s1">length </span><span class="s2">== </span><span class="s3">4</span><span class="s2">) {</span>
+            <span class="s0">try </span><span class="s2">{</span>
+                <span class="s0">int </span><span class="s1">side1 </span><span class="s2">= </span><span class="s1">Integer</span><span class="s2">.</span><span class="s1">parseInt</span><span class="s2">(</span><span class="s1">parts</span><span class="s2">[</span><span class="s3">1</span><span class="s2">]);</span>
+                <span class="s0">int </span><span class="s1">side2 </span><span class="s2">= </span><span class="s1">Integer</span><span class="s2">.</span><span class="s1">parseInt</span><span class="s2">(</span><span class="s1">parts</span><span class="s2">[</span><span class="s3">2</span><span class="s2">]);</span>
+                <span class="s0">int </span><span class="s1">side3 </span><span class="s2">= </span><span class="s1">Integer</span><span class="s2">.</span><span class="s1">parseInt</span><span class="s2">(</span><span class="s1">parts</span><span class="s2">[</span><span class="s3">3</span><span class="s2">]);</span>
+
+                <span class="s5">// Check if the triangle sides satisfy the triangle inequality theorem</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">isValidTriangle</span><span class="s2">(</span><span class="s1">side1</span><span class="s2">, </span><span class="s1">side2</span><span class="s2">, </span><span class="s1">side3</span><span class="s2">)) {</span>
+                    <span class="s5">// Calculate the angles of the triangle using the law of cosines</span>
+                    <span class="s0">double </span><span class="s1">angle1 </span><span class="s2">= </span><span class="s1">Math</span><span class="s2">.</span><span class="s1">acos</span><span class="s2">((</span><span class="s1">side2 </span><span class="s2">* </span><span class="s1">side2 </span><span class="s2">+ </span><span class="s1">side3 </span><span class="s2">* </span><span class="s1">side3 </span><span class="s2">- </span><span class="s1">side1 </span><span class="s2">* </span><span class="s1">side1</span><span class="s2">) / (</span><span class="s3">2.0 </span><span class="s2">* </span><span class="s1">side2 </span><span class="s2">* </span><span class="s1">side3</span><span class="s2">));</span>
+                    <span class="s0">double </span><span class="s1">angle2 </span><span class="s2">= </span><span class="s1">Math</span><span class="s2">.</span><span class="s1">acos</span><span class="s2">((</span><span class="s1">side1 </span><span class="s2">* </span><span class="s1">side1 </span><span class="s2">+ </span><span class="s1">side3 </span><span class="s2">* </span><span class="s1">side3 </span><span class="s2">- </span><span class="s1">side2 </span><span class="s2">* </span><span class="s1">side2</span><span class="s2">) / (</span><span class="s3">2.0 </span><span class="s2">* </span><span class="s1">side1 </span><span class="s2">* </span><span class="s1">side3</span><span class="s2">));</span>
+                    <span class="s0">double </span><span class="s1">angle3 </span><span class="s2">= </span><span class="s1">Math</span><span class="s2">.</span><span class="s1">acos</span><span class="s2">((</span><span class="s1">side1 </span><span class="s2">* </span><span class="s1">side1 </span><span class="s2">+ </span><span class="s1">side2 </span><span class="s2">* </span><span class="s1">side2 </span><span class="s2">- </span><span class="s1">side3 </span><span class="s2">* </span><span class="s1">side3</span><span class="s2">) / (</span><span class="s3">2.0 </span><span class="s2">* </span><span class="s1">side1 </span><span class="s2">* </span><span class="s1">side2</span><span class="s2">));</span>
+
+                    <span class="s5">// Convert angles from radians to degrees</span>
+                    <span class="s1">angle1 </span><span class="s2">= </span><span class="s1">Math</span><span class="s2">.</span><span class="s1">round</span><span class="s2">(</span><span class="s1">Math</span><span class="s2">.</span><span class="s1">toDegrees</span><span class="s2">(</span><span class="s1">angle1</span><span class="s2">));</span>
+                    <span class="s1">angle2 </span><span class="s2">= </span><span class="s1">Math</span><span class="s2">.</span><span class="s1">round</span><span class="s2">(</span><span class="s1">Math</span><span class="s2">.</span><span class="s1">toDegrees</span><span class="s2">(</span><span class="s1">angle2</span><span class="s2">));</span>
+                    <span class="s1">angle3 </span><span class="s2">= </span><span class="s1">Math</span><span class="s2">.</span><span class="s1">round</span><span class="s2">(</span><span class="s1">Math</span><span class="s2">.</span><span class="s1">toDegrees</span><span class="s2">(</span><span class="s1">angle3</span><span class="s2">));</span>
+
+                    <span class="s5">// Draw the triangle</span>
+                    <span class="s1">forward</span><span class="s2">(</span><span class="s1">side1</span><span class="s2">); </span><span class="s5">// Move forward by side1</span>
+                    <span class="s1">turnLeft</span><span class="s2">((</span><span class="s0">int</span><span class="s2">)(</span><span class="s3">180</span><span class="s2">-</span><span class="s1">angle3</span><span class="s2">)); </span><span class="s5">// Turn left by angle2</span>
+                    <span class="s1">forward</span><span class="s2">(</span><span class="s1">side2</span><span class="s2">); </span><span class="s5">// Move forward by side2</span>
+                    <span class="s1">turnLeft</span><span class="s2">((</span><span class="s0">int</span><span class="s2">)(</span><span class="s3">180 </span><span class="s2">- </span><span class="s1">angle1</span><span class="s2">)); </span><span class="s5">// Turn left by angle3</span>
+                    <span class="s1">forward</span><span class="s2">(</span><span class="s1">side3</span><span class="s2">); </span><span class="s5">// Move forward by side3</span>
+
+                    <span class="s5">// Reset the turtle</span>
+                    <span class="s1">reset</span><span class="s2">();</span>
+                <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                    <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Invalid triangle sides: &quot; </span><span class="s2">+ </span><span class="s1">side1 </span><span class="s2">+ </span><span class="s4">&quot;, &quot; </span><span class="s2">+ </span><span class="s1">side2 </span><span class="s2">+ </span><span class="s4">&quot;, &quot; </span><span class="s2">+ </span><span class="s1">side3</span><span class="s2">);</span>
+                <span class="s2">}</span>
+            <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">NumberFormatException e</span><span class="s2">) {</span>
+                <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Invalid Parameters for the command: &quot; </span><span class="s2">+ </span><span class="s1">parts</span><span class="s2">[</span><span class="s3">0</span><span class="s2">]);</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+            <span class="s1">JOptionPane</span><span class="s2">.</span><span class="s1">showMessageDialog</span><span class="s2">(</span><span class="s0">null</span><span class="s2">, </span><span class="s4">&quot;Invalid command format: &quot;</span><span class="s2">);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private boolean </span><span class="s1">isValidTriangle</span><span class="s2">(</span><span class="s0">int </span><span class="s1">side1</span><span class="s2">, </span><span class="s0">int </span><span class="s1">side2</span><span class="s2">, </span><span class="s0">int </span><span class="s1">side3</span><span class="s2">) {</span>
+        <span class="s5">// Check if the sum of the lengths of any two sides of the triangle is greater than the length of the third side</span>
+        <span class="s0">return </span><span class="s1">side1 </span><span class="s2">+ </span><span class="s1">side2 </span><span class="s2">&gt; </span><span class="s1">side3 </span><span class="s2">&amp;&amp; </span><span class="s1">side1 </span><span class="s2">+ </span><span class="s1">side3 </span><span class="s2">&gt; </span><span class="s1">side2 </span><span class="s2">&amp;&amp; </span><span class="s1">side2 </span><span class="s2">+ </span><span class="s1">side3 </span><span class="s2">&gt; </span><span class="s1">side1</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+
+
+<span class="s2">}</span>
+
+<span class="s0">public class </span><span class="s1">Main </span><span class="s2">{</span>
+    <span class="s0">public static void </span><span class="s1">main</span><span class="s2">(</span><span class="s1">String</span><span class="s2">[] </span><span class="s1">args</span><span class="s2">) {</span>
+        <span class="s1">GraphicsSystem graphicsSystem </span><span class="s2">= </span><span class="s0">new </span><span class="s1">GraphicsSystem</span><span class="s2">();</span>
+        <span class="s1">graphicsSystem</span><span class="s2">.</span><span class="s1">setupGraphics</span><span class="s2">();</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+
+</pre>
+</body>
+</html>
